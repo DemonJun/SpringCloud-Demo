@@ -1,0 +1,72 @@
+feign:
+  httpclient:
+    enabled: false
+  hystrix:
+    enabled: false
+  okhttp:
+    enabled: true
+  sentinel:
+    enabled: true
+
+logging:
+  level:
+    com:
+      demon: debug
+    alibaba:
+      nacos: warn
+    org: info
+    root: info
+  pattern:
+    console: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}'
+
+ribbon:
+  ConnectTimeout: 6000
+  ReadTimeout: 6000
+
+spring:
+  sleuth:
+    trace-id128: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 10000
+      idle-timeout: 30000
+      auto-commit: true
+      minimum-idle: 5
+      maximum-pool-size: 15
+      pool-name: DatebookHikariCP
+      connection-test-query: SELECT 1
+      max-lifetime: 600000
+    url: jdbc:mysql://47.101.179.54:3326/db_order?useUnicode=true&useSSL=false&characterEncoding=UTF-8
+    password: 123456
+    username: root
+    type: com.zaxxer.hikari.HikariDataSource
+  mvc:
+    servlet:
+      path: /order
+  redis:
+    database: 0
+    host: 47.101.179.54
+    lettuce:
+      pool:
+        max-active: 30
+        max-idle: 10
+        max-wait: -1ms
+        min-idle: 0
+      shutdownTimeout: 100ms
+    password: 123456
+    port: 6379
+    timeout: 100ms
+
+project:
+  env: dev
+
+mybatis-plus:
+  type-aliases-package: com.demon.order.entity
+  global-config:
+    db-config:
+      field-strategy: not_null
+      id-type: auto
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:/mybatis/mapper/*

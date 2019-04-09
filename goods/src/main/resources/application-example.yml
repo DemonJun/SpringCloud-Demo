@@ -1,0 +1,49 @@
+logging:
+  level:
+    com:
+      demon: debug
+      alibaba:
+        nacos: warn
+    org: warn
+    root: info
+  pattern:
+    console: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}'
+
+project:
+  env: dev
+
+ribbon:
+  ConnectTimeout: 6000
+  ReadTimeout: 6000
+
+feign:
+  httpclient:
+    enabled: false
+  hystrix:
+    enabled: false
+  okhttp:
+    enabled: true
+  sentinel:
+    enabled: true
+
+spring:
+  mvc:
+    servlet:
+      path: /goods
+  sleuth:
+    trace-id128: true
+  jackson:
+    default-property-inclusion: non_null
+  redis:
+    database: 0
+    host: 47.101.179.54
+    lettuce:
+      pool:
+        max-active: 30
+        max-idle: 10
+        max-wait: -1ms
+        min-idle: 0
+      shutdownTimeout: 100ms
+    password: 123456
+    port: 6379
+    timeout: 100ms

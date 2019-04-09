@@ -15,8 +15,16 @@
   <description>order</description>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>11</java.version>
     <spring-cloud.version>Greenwich.SR1</spring-cloud.version>
+    <alibaba-cloud.version>0.2.1.RELEASE</alibaba-cloud.version>
+    <mybstis-plus.version>3.1.0</mybstis-plus.version>
+    <docker.repository>192.168.1.175:5000</docker.repository>
+    <docker.namespace>junyundt</docker.namespace>
+    <docker.image.name>${project.name}</docker.image.name>
+    <docker.image.tag>dev</docker.image.tag>
   </properties>
 
   <dependencies>
@@ -41,8 +49,24 @@
       <artifactId>spring-cloud-starter-openfeign</artifactId>
     </dependency>
     <dependency>
+      <groupId>io.github.openfeign</groupId>
+      <artifactId>feign-okhttp</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-sleuth</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
     </dependency>
 
     <dependency>
@@ -65,6 +89,29 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-pool2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.demon</groupId>
+      <artifactId>common-utils</artifactId>
+      <version>0.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.alibaba.nacos</groupId>
+      <artifactId>nacos-client</artifactId>
+      <version>0.9.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.baomidou</groupId>
+      <artifactId>mybatis-plus-boot-starter</artifactId>
+      <version>${mybstis-plus.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+    </dependency>
   </dependencies>
 
   <dependencyManagement>
@@ -76,14 +123,65 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+        <version>${alibaba-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
   <build>
+    <finalName>${project.name}</finalName>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <copy file="${project.basedir}/target/${project.build.finalName}.${project.packaging}"
+                  tofile="${project.build.outputDirectory}/docker/app.jar"/>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.spotify</groupId>
+        <artifactId>dockerfile-maven-plugin</artifactId>
+        <version>1.4.10</version>
+        <configuration>
+          <!--设置镜像仓库的账户及密码，没有该部分可删除-->
+          <!--<username></username>-->
+          <!--<password>$password$</password>-->
+          <!--设置镜像仓库地址，格式为 仓库地址/镜像所属用户/镜像名称-->
+          <repository>
+            ${docker.repository}/${docker.namespace}/${docker.image.name}
+          </repository>
+          <!--设置镜像tag-->
+          <tag>${docker.image.tag}</tag>
+          <!--设置Docker上下文，即DockerFile的位置-->
+          <contextDirectory>${project.build.outputDirectory}/docker</contextDirectory>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </build>

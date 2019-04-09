@@ -1,0 +1,39 @@
+server:
+  port: 10010
+  compression:
+    enabled: true
+    mime-types: application/json
+    min-response-size: 1KB
+  http2:
+    enabled: true
+
+spring:
+  application:
+    name: goods-service
+  devtools:
+    livereload:
+      port: ${random.int(15000,16000)}
+  sleuth:
+    web:
+      client:
+        enabled: true
+    sampler:
+      probability: 1.0
+  cloud:
+    nacos:
+      config:
+        #        endpoint: ${ACM_ENDPOINT:acm.aliyun.com}
+        namespace: ${ACM_NAMESPACE:630e47ca-9e3a-47be-bff8-434e368e6d12}
+        #        access-key:
+        #        secret-key:
+        file-extension: yml
+        group: ${ACM_GROUP:DEFAULT_GROUP}
+        name: ${CONFIG_NAME:goods-service}
+        server-addr: 47.101.179.54:8848
+      discovery:
+        server-addr: 47.101.179.54:8848
+        namespace: ${ACM_NAMESPACE:630e47ca-9e3a-47be-bff8-434e368e6d12}
+    inetutils:
+      preferredNetworks:
+        - 192.168.
+        - 172.172.
