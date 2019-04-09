@@ -1,0 +1,41 @@
+version: '3.6'
+
+services:
+  mysql:
+    # 镜像名称
+    image: mysql
+    ports:
+      - "3326:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    # 指定环境变量，可在容器内获取
+    environment:
+      - TZ=Asia/Shanghai
+      - MYSQL_ROOT_PASSWORD=123456
+    # 容器部署设置
+    deploy:
+      # 部署方式二：replicated--手动指定需要容器部署数量
+      mode: replicated
+      # 指定容器部署数量，必须与部署方式二一起设定
+      replicas: 1
+      # 设置如何重启容器，毕竟有时候容器会意外退出
+      # condition：设置重启策略的条件，可选值有 on-failure, on-failure 和 any (默认：any)。
+      # delay：在重新启动尝试之间等待多长时间，指定为持续时间（默认值：0）。
+      # max_attempts：设置最大的重启尝试次数，默认是永不放弃，哈哈，感受到一股运维的绝望。
+      # window：在决定重新启动是否成功之前要等待多长时间，默认是立刻判断，有些容器启动时间比较长，指定一个“窗口期”非常重要
+      restart_policy:
+        condition: on-failure
+      # 容器资源配置
+      resources:
+        # 使用的最大资源
+        limits:
+          # 设置内存
+          memory: 512m
+        # 预留资源，简易理解为最小保留资源
+        reservations:
+          memory: 256M
+
+# 设置需要挂载的数据卷，上述所挂载的数据卷必须在此定义
+volumes:
+  config-mysql-data:
+    external: true

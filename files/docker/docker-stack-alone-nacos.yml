@@ -1,0 +1,28 @@
+version: "3.6"
+services:
+  nacos:
+    hostname: nacos-standalone
+    image: nacos/nacos-server:latest
+    ports:
+      - "8848:8848"
+      - "9555:9555"
+    volumes:
+      - nacos-log:/home/nacos/logs
+    environment:
+      - MODE=standalone
+      - PREFER_HOST_MODE=hostname
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          memory: 1024M
+        reservations:
+          memory: 256M
+
+# 设置需要挂载的数据卷，上述所挂载的数据卷必须在此定义
+volumes:
+  nacos-log:
+    external: true

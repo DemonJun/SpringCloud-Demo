@@ -1,0 +1,24 @@
+version: '3.6'
+
+services:
+  redis:
+    image: redis
+    command: redis-server --requirepass "123456"
+    volumes:
+      - redis-data:/data
+    environment:
+      - TZ=Asia/Shanghai
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          memory: 512G
+        reservations:
+          memory: 256M
+
+volumes:
+  redis-data:
+    external: true
